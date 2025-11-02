@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>I Have No Nonchalant Bone</title>
   <style>
     body {
@@ -17,7 +17,29 @@
       text-align: center;
       user-select: none;
     }
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      text-align: center;
+    }
+    /* Play Button */
+    #playBtn {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      background-color: #6b5b4b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 30px;
+      transition: background 0.3s;
+    }
+    #playBtn:hover {
+      background-color: #3e2f20;
+    }
 
+    /* Book styles */
     .book {
       background-color: #fffdf8;
       padding: 60px 80px;
@@ -94,7 +116,8 @@
       color: #3e2f20;
     }
 
-    @media (max-width: 700px) {
+    /* Responsive styles */
+    @media(max-width: 700px) {
       .book {
         width: 85%;
         padding: 40px 30px;
@@ -103,13 +126,13 @@
   </style>
 </head>
 <body>
+<div class="container">
+  <!-- Play Button -->
+  <button id="playBtn">🎵 Play Music & Read Poem</button>
 
-  <audio id="bgMusic" src="New West - Those Eyes (Lyrics).mp3" loop></audio>
-
-  <div class="book" id="page1">
-    <h1>I am just guy
-
-    </h1>
+  <!-- Book Pages -->
+  <div class="book" id="page1" style="display:none; opacity:0;">
+    <h1>I am just guy</h1>
     <p>
 Hi I am just a guy
 a humble guy
@@ -126,22 +149,13 @@ Guys are stupidy
 I am stupid, make guy mistakes
 make silly mistake 
 i am not just a human, I am also a guy
-
-
     </p>
     <div class="page-number">Page 1</div>
-    <div class="nav-buttons">
-      <span></span>
-      <button onclick="nextPage()">Next →</button>
-    </div>
-    <div class="click-hint">(click anywhere to play music 🎵)</div>
   </div>
 
   <div class="book" id="page2" style="display:none; opacity:0;">
     <h1>I am just a guy</h1>
     <p>
-
-
 but I don't just want to be any guy
 i want to be your guy
 I want to make you mine
@@ -161,60 +175,101 @@ the one and only guy
 and that guy is me
 but at the End
 I know i cannot be your guy
-but i still too 
+but i still want too 
 because i love you
     </p>
     <div class="author">— Anonymous</div>
     <div class="page-number">Page 2</div>
-    <div class="nav-buttons">
-      <button onclick="prevPage()">← Previous</button>
-      <span></span>
-    </div>
   </div>
 
-  <script>
-    const audio = document.getElementById('bgMusic');
-    let started = false;
-    const page1 = document.getElementById('page1');
-    const page2 = document.getElementById('page2');
+  <div class="book" id="page3" style="display:none; opacity:0;">
+    <h1>Final Thoughts</h1>
+    <p>
+Sometimes words fall short,
+but love speaks loud.
+Even if I am just a guy,
+my feelings are real and proud.
+</p>
+    <div class="page-number">Page 3</div>
+  </div>
 
-    function fadeInAudio(audioElement) {
-      audioElement.volume = 0;
-      const fade = setInterval(() => {
-        if (audioElement.volume < 1.0) {
-          audioElement.volume = Math.min(1, audioElement.volume + 0.05);
-        } else {
-          clearInterval(fade);
-        }
-      }, 200);
-    }
+  <!-- Navigation Buttons -->
+  <div class="nav-buttons" style="margin-top: 20px;">
+    <button id="prevBtn" style="display:none;">← Previous</button>
+    <button id="nextBtn">Next →</button>
+  </div>
 
-    document.body.addEventListener('click', () => {
-      if (!started) {
-        audio.play().then(() => fadeInAudio(audio));
-        started = true;
-        document.querySelector('.click-hint').style.display = 'none';
+  <div class="click-hint">(click the button to play music & start reading 🎵)</div>
+</div>
+
+<!-- Audio -->
+<audio id="bgMusic" src="New West - Those Eyes (Lyrics).mp3" loop></audio>
+
+<script>
+  const audio = document.getElementById('bgMusic');
+  const playBtn = document.getElementById('playBtn');
+  const page1 = document.getElementById('page1');
+  const page2 = document.getElementById('page2');
+  const page3 = document.getElementById('page3');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const clickHint = document.querySelector('.click-hint');
+
+  let currentPage = 1;
+  let started = false;
+
+  // Fade in music volume
+  function fadeInAudio(audioElement) {
+    audioElement.volume = 0;
+    const fade = setInterval(() => {
+      if (audioElement.volume < 1.0) {
+        audioElement.volume = Math.min(1, audioElement.volume + 0.05);
+      } else {
+        clearInterval(fade);
       }
+    }, 200);
+  }
+
+  // Play music and show first page
+  playBtn.addEventListener('click', () => {
+    if (!started) {
+      audio.play().then(() => fadeInAudio(audio));
+      started = true;
+      playBtn.style.display = 'none';
+      showPage(1);
+    }
+  });
+
+  function showPage(pageNumber) {
+    // Hide all pages
+    [page1, page2, page3].forEach(p => {
+      p.style.display = 'none';
+      p.style.opacity = 0;
     });
+    // Show selected page
+    const page = document.getElementById('page' + pageNumber);
+    page.style.display = 'block';
+    setTimeout(() => {
+      page.style.opacity = 1;
+    }, 50);
+    currentPage = pageNumber;
 
-    function nextPage() {
-      page1.style.opacity = "0";
-      setTimeout(() => {
-        page1.style.display = "none";
-        page2.style.display = "block";
-        setTimeout(() => page2.style.opacity = "1", 50);
-      }, 400);
+    // Toggle prev/next buttons
+    prevBtn.style.display = currentPage === 1 ? 'none' : 'inline-block';
+    nextBtn.style.display = currentPage === 3 ? 'none' : 'inline-block';
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (currentPage < 3) {
+      showPage(currentPage + 1);
     }
+  });
 
-    function prevPage() {
-      page2.style.opacity = "0";
-      setTimeout(() => {
-        page2.style.display = "none";
-        page1.style.display = "block";
-        setTimeout(() => page1.style.opacity = "1", 50);
-      }, 400);
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (currentPage > 1) {
+      showPage(currentPage - 1);
     }
-  </script>
-
+  });
+</script>
 </body>
 </html>
